@@ -16,7 +16,7 @@ unprogrameurfrancaisindependant/
 Livre-dont-tu-est-le-heros-version-python/
 game/MAJ/.information'''.replace('\n', '')
 
-        self.fichier_MAJ = '.information'
+        self.fichier_MAJ = 'MAJ/.information'
 
         self.clone_URL = '''https://github.com/
 unprogrameurfrancaisindependant/
@@ -50,6 +50,7 @@ Livre-dont-tu-est-le-heros-version-python.git'''.replace('\n', '')
         for e in range(len(version)):
             if version[e] > file_version[e]:
                 self.mise_a_jour_du_jeu_complet()
+                continue
             elif version[e] < file_version[e]:
                 continue
 
@@ -66,12 +67,27 @@ Livre-dont-tu-est-le-heros-version-python.git'''.replace('\n', '')
         Chemin_execution = os.getcwd()
         try:
             path_to_dir_temporaire = tempfile.mkdtemp(dir=Chemin_utilisateur)
+            print 'Début'
             git.Repo.clone_from(self.clone_URL, path_to_dir_temporaire,
                                 branch='game')
+            print os.listdir(path_to_dir_temporaire)
+            for files in os.listdir(Chemin_execution):
+                if files not in ['.git', '.sauvegarde']:
+                    if os.path.isdir((path_to_dir_temporaire + '/' + files)):
+                        shutil.rmtree(Chemin_execution + '/' + files)
+                    elif os.path.isfile((path_to_dir_temporaire
+                                         + '/' + files)):
+                        os.remove(Chemin_execution + '/' + files)
+
             for files in os.listdir(path_to_dir_temporaire):
-                if files in ['.git', '.sauvegarde']:
-                    shutil.move((path_to_dir_temporaire + files,
-                                 Chemin_execution + files))
+                if files not in ['.git', '.sauvegarde']:
+                    if os.path.isdir((path_to_dir_temporaire + '/' + files)):
+                        shutil.copytree((path_to_dir_temporaire + '/' + files),
+                                        (Chemin_execution + '/' + files))
+                    elif os.path.isfile((path_to_dir_temporaire
+                                         + '/' + files)):
+                        shutil.copy2((path_to_dir_temporaire + '/' + files),
+                                     (Chemin_execution + '/' + files))
 
         except:
             message = """Une érreur s'est produite lors de la mise a
@@ -94,7 +110,6 @@ jour, veuillez réessayer ulterieurement""".replace('\n', '')
         self.requete_maj()
         self.fichier_maj()
         self.comparaison()
-                                
 
     def __repr__(self):
         print self.file_version
