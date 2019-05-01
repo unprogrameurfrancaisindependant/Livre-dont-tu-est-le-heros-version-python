@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import random
+
 ###############Porte code 1########################
 code_bon_1 = random.randint(10,99)
 code_bon_2 = random.randint(10,99)
