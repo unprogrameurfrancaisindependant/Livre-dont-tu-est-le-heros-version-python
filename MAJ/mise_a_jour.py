@@ -72,7 +72,6 @@ Livre-dont-tu-est-le-heros-version-python.git'''.replace('\n', '')
         try:
             path_to_dir_temporaire = tempfile.mkdtemp(dir=Chemin_utilisateur)
             git.Repo.clone_from(self.clone_URL, path_to_dir_temporaire,
-                                branch='game')
             set_permissions('free')
             for files in os.listdir(Chemin_execution):
                 if files not in ['.git', '.sauvegarde']:
@@ -81,8 +80,6 @@ Livre-dont-tu-est-le-heros-version-python.git'''.replace('\n', '')
                     elif os.path.isfile((path_to_dir_temporaire
                                          + '/' + files)):
                         os.remove(Chemin_execution + '/' + files)
-
-
 
             for files in os.listdir(path_to_dir_temporaire):
                 if files not in ['.git', '.sauvegarde']:
@@ -93,7 +90,6 @@ Livre-dont-tu-est-le-heros-version-python.git'''.replace('\n', '')
                                          + '/' + files)):
                         shutil.copy2((path_to_dir_temporaire + '/' + files),
                                      (Chemin_execution + '/' + files))
-                
 
         except:
             message = """Une érreur s'est produite lors de la mise a
@@ -117,6 +113,12 @@ jour, veuillez réessayer ulterieurement""".replace('\n', '')
         self.requete_maj()
         self.fichier_maj()
         self.comparaison()
+
+    def __repr__(self):
+        print self.file_version
+        print self.file_date_de_modification
+        print self.Tipeurs
+        return 'lol'
 
 
 if __name__ == '__main__':
