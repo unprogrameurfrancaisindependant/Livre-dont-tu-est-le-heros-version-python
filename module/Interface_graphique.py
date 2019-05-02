@@ -494,25 +494,27 @@ class Interface:
             IMG_horloge.append(pygame.image.load(
                 (DATA + 'HORLOGE//IMG_horloge_{}').encode('utf8').format(i+1))
                                .convert_alpha())
-        """
-        ####Video####
-        self.stokage_temps = 0
-        self.cap=cv2.VideoCapture("/home/pi/Livre dont tu est le
-                    heros version python/Images/FONDECRAN/Rain-305.mp4")
-        print(self.cap.get(cv2.cv.CV_CAP_PROP_FPS))
-        self.nb_images_fond = self.cap.get(cv2.cv.CV_CAP_PROP_FRAME_COUNT)
-        print(self.nb_images_fond)
-        self.cap_size = (self.cap.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH),
-                        self.cap.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT))
-        self.cap_new_size = 1
-        self.rapport()
-        self.list_fond_ecran = []
-        self.fond_stokage()
-        ####    ####
-        """
 
         pygame.mixer_music.load(
             DATA + "MUSIQUE//Glaciaere-Hammock-02RelaxingInTheHammock.wav")
+
+        self.creation_de_la_partie()
+        # Lignes a modifier
+
+    def creation_de_la_partie(self):
+        import _cache
+        pygame.display.set_caption(_cache.NOM_DU_LIVRE)
+        try:
+            cursor = pygame.cursors.load_xbm(
+                ('_cache/DATA/CURSEUR//or_curseur_dague.xbm').encode('utf8'),
+                ('_cache/DATA/CURSEUR//and_curseur_dague.xbm').encode('utf8'))
+        except:
+            cursor = pygame.cursors.load_xbm(
+                (DATA + 'CURSEUR//or_curseur_dague.xbm').encode('utf8'),
+                (DATA + 'CURSEUR//and_curseur_dague.xbm').encode('utf8'))
+
+        pygame.mouse.set_cursor(*cursor)
+        pygame.mouse.set_visible(1)
 
     def Play_musique(self):
         pygame.mixer_music.play(-1)

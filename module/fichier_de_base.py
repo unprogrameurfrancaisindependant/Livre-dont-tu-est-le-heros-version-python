@@ -3,20 +3,33 @@ from __future__ import unicode_literals
 
 import random
 
-from classe_du_jeu import Jeu
-from classe_du_personnage import Personnage
-from Interface_graphique import Interface
+from creation_cache import create_cache, delete_cache, verify_cache
 
 # Ajouter extention twitch plus tard: twitchio
 
 
 class Game_Master:
     def __init__(self):
+        if verify_cache():
+            delete_cache()
+        create_cache('Exemple')
+
+        self.creation_de_la_partie()
+        # Ligne a modifier
+
+    def creation_de_la_partie(self):
+        from classe_du_jeu import Jeu
+        from _cache import Personnage
+        from Interface_graphique import Interface
+
         self.page_actuel = str(1)
         self.Personnage = Personnage()
         self.Jeu = Jeu()
         self.histoire = self.Jeu.histoire
         self.Interface = Interface()
+
+    def fin_de_la_partie(self):
+        delete_cache()
 
     def replace_var(self, phrase):
         def t(x):
@@ -94,7 +107,8 @@ Actions:
                 else:
                     raise Exception
 
-        self.variables_histoire = self.histoire[self.page_actuel]
+        self.variables_histoire = self.histoire(self.page_actuel)
+
         if 'actions' in self.variables_histoire.keys():
             for Emplacement, quoi in (self.variables_histoire['actions']
                                       .items()):
@@ -416,5 +430,6 @@ Si on veut ajouter un temps sur une déccision:
         self.Interface.Close()
 
 
-Pas_d_idee = Game_Master()
-Pas_d_idee.deroulement_jeu()
+if __name__ == '__main__':
+    Pas_d_idee = Game_Master()
+    Pas_d_idee.deroulement_jeu()

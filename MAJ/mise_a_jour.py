@@ -5,6 +5,7 @@ import os
 import shutil
 import tempfile
 import urllib2
+from module import set_permissions
 
 import git
 
@@ -16,11 +17,13 @@ unprogrameurfrancaisindependant/
 Livre-dont-tu-est-le-heros-version-python/
 game/MAJ/.information'''.replace('\n', '')
 
-        self.fichier_MAJ = '.information'
+        self.fichier_MAJ = 'MAJ/.information'
 
         self.clone_URL = '''https://github.com/
 unprogrameurfrancaisindependant/
 Livre-dont-tu-est-le-heros-version-python.git'''.replace('\n', '')
+
+        self.mise_a_jour_automatique()
 
     def createur_variables(self, expression, prefix=''):
         variable_valeur = expression.split('=')
@@ -50,6 +53,7 @@ Livre-dont-tu-est-le-heros-version-python.git'''.replace('\n', '')
         for e in range(len(version)):
             if version[e] > file_version[e]:
                 self.mise_a_jour_du_jeu_complet()
+                return
             elif version[e] < file_version[e]:
                 continue
 
@@ -58,6 +62,7 @@ Livre-dont-tu-est-le-heros-version-python.git'''.replace('\n', '')
         for e in range(len(date_de_modification)):
             if date_de_modification[e] > file_date_de_modification[e]:
                 self.mise_a_jour_tipeurs()
+                return
             elif date_de_modification[e] < file_date_de_modification[e]:
                 continue
 
@@ -68,16 +73,34 @@ Livre-dont-tu-est-le-heros-version-python.git'''.replace('\n', '')
             path_to_dir_temporaire = tempfile.mkdtemp(dir=Chemin_utilisateur)
             git.Repo.clone_from(self.clone_URL, path_to_dir_temporaire,
                                 branch='game')
+            set_permissions('free')
+            for files in os.listdir(Chemin_execution):
+                if files not in ['.git', '.sauvegarde']:
+                    if os.path.isdir((path_to_dir_temporaire + '/' + files)):
+                        shutil.rmtree(Chemin_execution + '/' + files)
+                    elif os.path.isfile((path_to_dir_temporaire
+                                         + '/' + files)):
+                        os.remove(Chemin_execution + '/' + files)
+
+
+
             for files in os.listdir(path_to_dir_temporaire):
-                if files in ['.git', '.sauvegarde']:
-                    shutil.move((path_to_dir_temporaire + files,
-                                 Chemin_execution + files))
+                if files not in ['.git', '.sauvegarde']:
+                    if os.path.isdir((path_to_dir_temporaire + '/' + files)):
+                        shutil.copytree((path_to_dir_temporaire + '/' + files),
+                                        (Chemin_execution + '/' + files))
+                    elif os.path.isfile((path_to_dir_temporaire
+                                         + '/' + files)):
+                        shutil.copy2((path_to_dir_temporaire + '/' + files),
+                                     (Chemin_execution + '/' + files))
+                
 
         except:
             message = """Une érreur s'est produite lors de la mise a
 jour, veuillez réessayer ulterieurement""".replace('\n', '')
 
         finally:
+            set_permissions('lock')
             try:
                 shutil.rmtree(path_to_dir_temporaire)
             except:
@@ -94,17 +117,7 @@ jour, veuillez réessayer ulterieurement""".replace('\n', '')
         self.requete_maj()
         self.fichier_maj()
         self.comparaison()
-                                
-
-    def __repr__(self):
-        print self.file_version
-        print self.file_date_de_modification
-        print self.Tipeurs
-        return 'lol'
 
 
 if __name__ == '__main__':
     MAJ = MAJ()
-    MAJ.requete_maj()
-    MAJ.fichier_maj()
-    MAJ.comparaison()
