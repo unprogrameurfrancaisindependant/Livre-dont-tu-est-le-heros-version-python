@@ -72,6 +72,7 @@ Livre-dont-tu-est-le-heros-version-python.git'''.replace('\n', '')
         try:
             path_to_dir_temporaire = tempfile.mkdtemp(dir=Chemin_utilisateur)
             git.Repo.clone_from(self.clone_URL, path_to_dir_temporaire,
+                                branch='game')
             set_permissions('free')
             for files in os.listdir(Chemin_execution):
                 if files not in ['.git', '.sauvegarde']:
