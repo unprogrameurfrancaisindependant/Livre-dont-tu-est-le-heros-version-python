@@ -36,7 +36,6 @@ def clear_files(here=True):
 /Livre-dont-tu-est-le-heros-version-python'''.replace('\n', '')
     else:
         Chemin_execution = os.getcwd()
-
     for files in os.listdir(Chemin_execution):
         if files == 'Jeu.py':
             os.chmod(os.path.join(Chemin_execution, files), 0o555)
@@ -45,8 +44,7 @@ def clear_files(here=True):
         elif files == '.git':
             pass
         else:
-            for dossier, sous_dossier, fichiers in os.walk(
-                    os.path.join(Chemin_execution, files)):
+            for dossier, sous_dossier, fichiers in os.walk(                    os.path.join(Chemin_execution, files)):
                 for fichier in fichiers:
                     if fichier == 'mise_a_jour.py':
                         pass

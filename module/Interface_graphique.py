@@ -513,7 +513,6 @@ class Interface:
             cursor = pygame.cursors.load_xbm(
                 (os.path.join(DATA, 'CURSEUR', 'or_curseur_dague.xbm')).encode('utf8'),
                 (os.path.join(DATA, 'CURSEUR', 'and_curseur_dague.xbm')).encode('utf8'))
-
         pygame.mouse.set_cursor(*cursor)
         pygame.mouse.set_visible(1)
 

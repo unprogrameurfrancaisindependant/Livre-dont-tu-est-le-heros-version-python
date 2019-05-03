@@ -1,10 +1,10 @@
+
 #!/usr/bin/env python2.7
 # -*- coding:Utf-8 -*- 
 from MAJ import MAJ
 from module import Game_Master, clear_files, set_permissions
 
 MAJ().mise_a_jour_automatique()
-
 
 set_permissions('execute')
 
