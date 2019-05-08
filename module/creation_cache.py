@@ -36,6 +36,7 @@ def create_cache(file_to_cache):
 
 def delete_cache():
     Chemin_execution = os.getcwd()
+    os.chmod(os.path.join(Chemin_execution, '_cache'), 0o777)
     shutil.rmtree(os.path.join(Chemin_execution, '_cache'))
 
 

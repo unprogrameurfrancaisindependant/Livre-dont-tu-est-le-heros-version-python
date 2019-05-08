@@ -129,7 +129,7 @@ jour, veuillez réessayer ulterieurement""".replace('\n', '')
 
         finally:
             paquets_mise_a_jour()
-            set_permissions('lock')
+            set_permissions('execute')
             try:
                 shutil.rmtree(path_to_dir_temporaire)
             except:

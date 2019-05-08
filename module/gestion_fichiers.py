@@ -24,8 +24,11 @@ def set_permissions(permision_type='execute', here=True):
             for dossier, sous_dossier, fichiers in os.walk(
                     os.path.join(Chemin_execution, files)):
                 for fichier in fichiers:
-                    if fichier == 'mise_a_jour.py':
+                    if (fichier == 'mise_a_jour.py' or files == '__init__.py'
+                            or files == 'gestion_fichiers'):
                         pass
+                    #if fichier == 'gestion_fichiers.py':
+                    #    pass
                     elif os.path.isfile(os.path.join(dossier, fichier)):
                         os.chmod(os.path.join(dossier, fichier), permission[2])
 
@@ -57,4 +60,4 @@ def clear_files(here=True):
 
 if __name__ == '__main__':
     clear_files(False)
-    set_permissions('execute', False)
+    set_permissions('free', False)
