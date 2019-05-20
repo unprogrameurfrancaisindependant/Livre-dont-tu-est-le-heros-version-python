@@ -10,7 +10,7 @@ class Jeu:
     def __init__(self):
         for item in dir(_cache.fichier_histoire):
             if (not item.startswith('_') and not item == 'random' and
-                not item == 'unicode_literals' and not item == 'histoire'):
+                    not item == 'unicode_literals' and not item == 'histoire'):
                 setattr(self, item, getattr(_cache.fichier_histoire, item))
 
     def histoire(self, page):

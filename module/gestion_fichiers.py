@@ -3,8 +3,8 @@ import os
 
 def set_permissions(permision_type='execute', here=True):
     if not here:
-        Chemin_execution = '''/home/pi/pyprojects
-/Livre-dont-tu-est-le-heros-version-python'''.replace('\n', '')
+        Chemin_execution = '''/home/pi/pyprojects/
+Livre-dont-tu-est-le-heros-version-python'''.replace('\n', '')
     else:
         Chemin_execution = os.getcwd()
 
@@ -27,16 +27,15 @@ def set_permissions(permision_type='execute', here=True):
                     if (fichier == 'mise_a_jour.py' or files == '__init__.py'
                             or files == 'gestion_fichiers'):
                         pass
-                    #if fichier == 'gestion_fichiers.py':
-                    #    pass
                     elif os.path.isfile(os.path.join(dossier, fichier)):
                         os.chmod(os.path.join(dossier, fichier), permission[2])
+                        print os.path.join(dossier, fichier)
 
 
 def clear_files(here=True):
     if not here:
-        Chemin_execution = '''/home/pi/pyprojects
-/Livre-dont-tu-est-le-heros-version-python'''.replace('\n', '')
+        Chemin_execution = '''/home/pi/pyprojects/
+Livre-dont-tu-est-le-heros-version-python'''.replace('\n', '')
     else:
         Chemin_execution = os.getcwd()
     for files in os.listdir(Chemin_execution):
@@ -47,7 +46,8 @@ def clear_files(here=True):
         elif files == '.git':
             pass
         else:
-            for dossier, sous_dossier, fichiers in os.walk(                    os.path.join(Chemin_execution, files)):
+            for dossier, sous_dossier, fichiers in os.walk(
+                    os.path.join(Chemin_execution, files)):
                 for fichier in fichiers:
                     if fichier == 'mise_a_jour.py':
                         pass

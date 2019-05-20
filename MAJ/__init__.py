@@ -1,1 +1,1 @@
-from mise_a_jour import MAJ
+from mise_a_jour import MAJ, VERSION, Tipeurs

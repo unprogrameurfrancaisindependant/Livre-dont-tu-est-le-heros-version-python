@@ -11,11 +11,11 @@ def create_cache(file_to_cache):
     os.mkdir(os.path.join(Chemin_execution, '_cache'))
 
     for files in os.listdir(os.path.join(Chemin_execution, 'histoires',
-                                         file_to_cache)) :
+                                         file_to_cache)):
         if os.path.isdir(os.path.join(Chemin_execution, 'histoires',
                                       file_to_cache, files)):
             shutil.copytree(os.path.join(Chemin_execution, 'histoires',
-                                      file_to_cache, files),
+                                         file_to_cache, files),
                             os.path.join(Chemin_execution, '_cache', files))
         elif os.path.isfile(os.path.join(Chemin_execution, 'histoires',
                                          file_to_cache, files)):
@@ -28,7 +28,7 @@ def create_cache(file_to_cache):
     for index, story_page in _cache.fichier_histoire.histoire.items():
         with open(os.path.join(Chemin_execution,
                                '_cache', 'PAGES',
-                               '{}.txt').format(index),'w') as f:
+                               '{}.txt').format(index), 'w') as f:
             f.write(str(story_page))
 
     _cache.fichier_histoire.histoire = dict()

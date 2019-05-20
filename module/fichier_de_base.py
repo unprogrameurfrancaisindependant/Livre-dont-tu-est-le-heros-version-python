@@ -7,9 +7,14 @@ from creation_cache import create_cache, delete_cache, verify_cache
 
 # Ajouter extention twitch plus tard: twitchio
 
+DEBUG = False
+
 
 class Game_Master:
-    def __init__(self):
+    def __init__(self, DEBUGt=False):
+        global DEBUG
+        DEBUG = DEBUGt
+
         if verify_cache():
             delete_cache()
         create_cache('Exemple')
@@ -26,7 +31,7 @@ class Game_Master:
         self.Personnage = Personnage()
         self.Jeu = Jeu()
         self.histoire = self.Jeu.histoire
-        self.Interface = Interface()
+        self.Interface = Interface(DEBUG)
 
     def fin_de_la_partie(self):
         delete_cache()
@@ -47,6 +52,15 @@ class Game_Master:
             else:
                 raise "Cette variable n'existe pas: " + str(phrase[nb:nb_fin])
         return phrase
+
+    def genre(self, phrase, nb_genre):
+        "nb_genre = 1 male | 2 female"
+        t = phrase.split("|")
+        len_t, mod_t = len(t), len(t) % 3
+        nb = int(len_t/3)
+        for i in range(nb):
+            del(t[len_t-(nb_genre+mod_t)-3*i])
+        return "".join(t)
 
     def fonction_liste_soustraire(self, liste, objecte):
         var = liste
@@ -159,7 +173,8 @@ Textes:
         """
         Texte = self.variables_histoire['texte']
         Texte = self.replace_var(Texte)
-
+        Texte = self.genre(Texte, 1)
+        # Ajouter si male ou female
 
 ###############################################################################
 
@@ -402,11 +417,13 @@ Si on veut ajouter un temps sur une déccision:
     def deroulement_jeu(self):
         self.change_stats = list()
         self.creation_stats()
-        self.Interface.Play_musique()
+        # self.Interface.Play_musique()
         resize = False
         while 1:
-            data = self.lecture_pages()
-            self.mise_a_jour_stats()
+            if not resize:
+                data = self.lecture_pages()
+                self.mise_a_jour_stats()
+
             retour = self.Interface.page_livre(data, resize)
             if retour[0] == 'resize':
                 self.resize()

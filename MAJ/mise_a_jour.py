@@ -11,20 +11,46 @@ import zipfile
 from mise_a_jour_paquets import paquets_mise_a_jour
 from module import set_permissions
 
+Fichier_MAJ = 'MAJ/.information'
+
+
+def Tipeurs():
+    global Fichier_MAJ
+    with open(Fichier_MAJ, 'r') as f:
+        fichier = f.read()
+        liste = fichier.replace('\n', '').split(';')
+        for item in liste:
+            variable_valeur = item.split('=')
+            if variable_valeur[0].strip() == "Tipeurs":
+                return eval(variable_valeur[1])
+    return dict()
+
+
+def VERSION():
+    global Fichier_MAJ
+    with open(Fichier_MAJ, 'r') as f:
+        fichier = f.read()
+        liste = fichier.replace('\n', '').split(';')
+        for item in liste:
+            variable_valeur = item.split('=')
+            if variable_valeur[0].strip() == "version":
+                return str(variable_valeur[1])
+    return '0.0.0'
+
 
 class MAJ:
     def __init__(self):
+        global Fichier_MAJ
+
         self.URL = '''https://raw.githubusercontent.com/
 unprogrameurfrancaisindependant/
 Livre-dont-tu-est-le-heros-version-python/
 game/MAJ/.information'''.replace('\n', '')
 
-        self.fichier_MAJ = 'MAJ/.information'
+        self.fichier_MAJ = Fichier_MAJ
 
         self.zip_URL = '''https://github.com/unprogrameurfrancaisindependant/
 Livre-dont-tu-est-le-heros-version-python/archive/game.zip'''.replace('\n', '')
-
-        self.mise_a_jour_automatique()
 
     def createur_variables(self, expression, prefix=''):
         variable_valeur = expression.split('=')
@@ -79,8 +105,8 @@ Livre-dont-tu-est-le-heros-version-python/archive/game.zip'''.replace('\n', '')
                                os.path.join(
                                    path_to_dir_temporaire, 'file.zip'))
             with zipfile.ZipFile(os.path.join(
-                path_to_dir_temporaire, 'file.zip')
-                                 , 'r') as file_zipped:
+                    path_to_dir_temporaire, 'file.zip'),
+                                 'r') as file_zipped:
                 file_zipped.extractall(path_to_dir_temporaire)
             path_to_dir_temporaire_uzipped = os.path.join(
                 path_to_dir_temporaire,
@@ -99,7 +125,7 @@ Livre-dont-tu-est-le-heros-version-python/archive/game.zip'''.replace('\n', '')
                 if files not in ['.git', 'histoires_sauvegardees',
                                  'histoires', 'file.zip']:
                     if os.path.isdir(os.path.join(
-                        path_to_dir_temporaire_uzipped, files)):
+                            path_to_dir_temporaire_uzipped, files)):
                         shutil.copytree(os.path.join(
                             path_to_dir_temporaire_uzipped, files),
                                     os.path.join(

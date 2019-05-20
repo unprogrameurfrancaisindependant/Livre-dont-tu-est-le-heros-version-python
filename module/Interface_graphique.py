@@ -2,7 +2,10 @@
 from __future__ import unicode_literals
 
 import os
+import random
 import time
+
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
 import pygame
 from pygame.locals import *
@@ -11,10 +14,10 @@ from pygame.locals import (BLEND_RGBA_SUB, K_ESCAPE, KEYDOWN, MOUSEBUTTONDOWN,
 
 # import fichier_de_Base
 
-FPS = 30
-# frames per second to update the screen760
+FPS = 60
+# frames per second to update the screen
 WINDOWWIDTH = 1000
-# width of the program's window, in pixels640
+# width of the program's window, in pixels
 WINDOWHEIGHT = 560
 # height in pixels
 
@@ -32,6 +35,8 @@ IMG_bouton = list()
 IMG_horloge = list()
 
 DATA = 'DATA//'
+
+DEBUG = False
 
 Name = 'Le live dont vous étes le héros'
 
@@ -217,10 +222,7 @@ class Horloge(pygame.sprite.Sprite):
         self.default_choice = default_choice
         self.end = None
 
-        if FPS == 30:
-            self.decal = - ((self.nb_temps) % 48 - 48) + 2
-        elif FPS == 60:
-            self.decal = - ((self.nb_temps) % 48 - 48) + 1
+        self.decal = - ((self.nb_temps) % 48 - 48)
 
     def start(self):
         self.show = True
@@ -463,12 +465,173 @@ class ProgressBar(pygame.sprite.Sprite):
             self.size_text[1] - self.width_progress_bar * 4)
 
 
+class cadre_tipeee(pygame.sprite.Sprite):
+    def __init__(self, image, tipeurs):
+        global DISPLAYSURF, FPS, POLICE
+        pygame.sprite.Sprite.__init__(self)
+        self.arch_image = image
+        self.rect = self.arch_image.get_rect()
+
+        self.new_people = None
+        self.new_people_nb = 0
+        self.list_people = list()
+        self.pos_last_people = None
+        self.old_people = None
+        self.old_people_nb = 0
+
+        self.decaler = 2
+
+        self.pos1_h = False
+        self.taille = False
+
+        if FPS == 30:
+            self.new_points_plus = 1
+        elif FPS == 60:
+            self.new_points_plus = 0.5
+
+        self.list_tipeurs = list()
+
+        if '3' in tipeurs:
+            for people in tipeurs['3']:
+                self.list_tipeurs += [str(people[1])
+                                      + ' ' + str(people[0])] * 3
+
+        if '2' in tipeurs:
+            for people in tipeurs['2']:
+                self.list_tipeurs += [str(people[1])
+                                      + ' ' + str(people[0])] * 1
+
+        random.shuffle(self.list_tipeurs)
+
+    def resize(self, pos, taille, taille_texte):
+        self.image = self.arch_image.copy()
+        if self.taille:
+            self.rapport = taille[0] / float(self.taille[0])
+        else:
+            self.rapport = 1
+
+        self.taille = taille
+        self.image = pygame.transform.scale(self.image, taille)
+        self.rect = self.image.get_rect()
+        self.rect = self.rect.move(pos)
+        self.font = pygame.font.SysFont(POLICE, taille_texte)
+        self.text_h = self.font.render("ABCDEFG", 1, (0, 0, 0)).get_size()[1]
+        self.font_Title = pygame.font.SysFont(POLICE, taille_texte * 2)
+        self.Text_Title = self.font_Title.render("Tipeurs", 1,
+                                                 (255, 255, 255))
+        self.Text_Title_rect = self.Text_Title.get_rect()
+        self.Text_Title_rect.center = (self.taille[0] / 2,
+                                       self.taille[1] * 0.2 / 2)
+        if not self.pos1_h:
+            self.pos1_h = taille[1] - self.text_h * 2
+        else:
+            self.pos1_h = int(self.pos1_h * self.rapport)
+        self.image.blit(self.Text_Title, self.Text_Title_rect)
+        self.nb_temps = (
+            (self.taille[1] * 0.20 - self.text_h) / float(5 * FPS))
+        self.image_save = self.image.copy()
+        if self.new_people:
+            new_img = pygame.transform.scale(self.new_people[0], (
+                int(self.new_people[1].w * self.rapport),
+                int(self.new_people[1].h * self.rapport)))
+            self.new_people = (new_img, new_img.get_rect())
+            self.text_h = int(self.new_people[1].h * self.rapport)
+        if self.old_people:
+            new_img = pygame.transform.scale(self.old_people[0], (
+                int(self.old_people[1].w * self.rapport),
+                int(self.old_people[1].h * self.rapport)))
+            self.old_people = (new_img, new_img.get_rect())
+        for people in self.list_people:
+            new_img = pygame.transform.scale(people[0],
+                                             (int(people[1].w * self.rapport),
+                                              int(people[1].h * self.rapport)))
+            self.list_people[self.list_people.index(people)] = (
+                new_img, new_img.get_rect())
+            self.text_h = int(people[1].h * self.rapport)
+
+    def update(self):
+        self.update_anim()
+        self.image.blit(self.image_save, pygame.rect.Rect((0, 0), self.taille))
+        if self.new_people:
+            self.image.blit(*self.new_people)
+        if self.old_people:
+            self.image.blit(*self.old_people)
+        for people in self.list_people:
+            self.image.blit(*people)
+        DISPLAYSURF.blit(self.image, self.rect)
+
+    def update_anim(self):
+        if self.new_people:
+            self.new_people = (self.new_people_text_img.copy(),
+                               self.new_people[1])
+            self.new_people[0].fill((0, 0, 0,
+                                     int(255 - 17 * self.new_people_nb)),
+                                    None, special_flags=BLEND_RGBA_SUB)
+            self.new_people[1].topleft = (
+                int(((self.taille[0]/float(15)) * self.new_people_nb)
+                    - self.taille[0]),
+                int(self.pos1_h + self.text_h * self.indice))
+            self.new_people_nb += self.new_points_plus
+            if self.new_people_nb > 15:
+                if self.list_people == list():
+                    self.pos1_h = self.taille[1] - self.text_h
+                self.list_people.append(self.new_people)
+                self.new_people = None
+
+        if self.old_people:
+            self.old_people[0].fill((0, 0, 0,
+                                     int(17 * self.new_points_plus)),
+                                    None, special_flags=BLEND_RGBA_SUB)
+            self.old_people[1].topleft = (int(
+                (self.taille[0]/float(15)) * self.old_people_nb),
+                                          int(self.taille[1] * 0.20))
+            self.old_people_nb += self.new_points_plus
+            if self.old_people_nb > 15:
+                self.old_people = None
+
+        self.indice = 0
+        for people in self.list_people:
+            people[1].topleft = (0, int(
+                self.pos1_h + self.text_h * self.indice))
+            self.list_people[self.indice] = people
+            self.indice += 1
+
+        self.pos1_h -= self.nb_temps
+        self.pos_last_people_h = self.pos1_h + self.text_h * self.indice
+
+        if (self.pos_last_people_h <= (self.taille[1] - self.text_h)
+                and not self.new_people):
+            self.new_name()
+
+        if self.pos1_h <= self.taille[1] * 0.20:
+            self.old_name()
+
+    def new_name(self):
+        self.new_people_nb = 1
+        new = random.choice(self.list_tipeurs)
+        text_new = self.font.render(new, 1, (255, 255, 255))
+        new_rect = text_new.get_rect()
+        new_rect = new_rect.move(- self.taille[0],
+                                 self.taille[1] - self.text_h)
+        text_new.set_alpha(0)
+        self.new_people_text_img = text_new
+        self.new_people = (text_new, new_rect)
+
+    def old_name(self):
+        self.old_people_nb = 1
+        self.old_people = self.list_people[0]
+        del self.list_people[0]
+        self.pos1_h = self.list_people[0][1].y
+
+
 class Interface:
-    def __init__(self):
+    def __init__(self, DEBUGt):
         global FPSCLOCK, DISPLAYSURF, LOGOIMAGE, SPOTIMAGE
         global SETTINGSIMAGE, SETTINGSBUTTONIMAGE, RESETBUTTONIMAGE
-        global NAME, DATA, NBDECHET, WINDOWWIDTH, WINDOWHEIGHT
+        global NAME, WINDOWWIDTH, WINDOWHEIGHT
         global IMG_bouton, IMG_horloge, DATA
+        global DEBUG
+        DEBUG = DEBUGt
         pygame.init()
         pygame.mixer.init()
         FPSCLOCK = pygame.time.Clock()
@@ -477,9 +640,50 @@ class Interface:
         # pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
         pygame.display.set_caption(Name)
 
+        self.import_default_data()
+        # Importe les imaghes et musiquespar default
+
+        self.creation_de_la_partie()
+        # Lignes a modifier
+
+    def creation_de_la_partie(self):
+        import _cache
+        pygame.display.set_caption(_cache.NOM_DU_LIVRE)
+
+        try:
+            cursor = pygame.cursors.load_xbm(
+                (os.path.join('_cache', 'DATA', 'CURSEUR',
+                              'or_curseur_dague.xbm')).encode('utf8'),
+                (os.path.join('_cache', 'DATA', 'CURSEUR',
+                              'and_curseur_dague.xbm')).encode('utf8'))
+        except:
+            cursor = pygame.cursors.load_xbm(
+                (os.path.join(DATA, 'CURSEUR',
+                              'or_curseur_dague.xbm')).encode('utf8'),
+                (os.path.join(DATA, 'CURSEUR',
+                              'and_curseur_dague.xbm')).encode('utf8'))
+        pygame.mouse.set_cursor(*cursor)
+        pygame.mouse.set_visible(1)
+
+    def import_default_data(self):
+        from MAJ import Tipeurs, VERSION
+        global IMG_bouton, IMG_horloge, DATA
+
+        img_cadre_tipeurs = pygame.image.load(
+                (os.path.join(DATA, 'CADRE', 'Cadre_tipeurs')
+                 ).encode('utf8')).convert_alpha()
+
+        self.cadre_tipeee = cadre_tipeee(img_cadre_tipeurs,
+                                         Tipeurs())
+
+        self.cadre_tipeee_sprites = pygame.sprite.RenderPlain(
+            self.cadre_tipeee)
+
         cursor = pygame.cursors.load_xbm(
-            (os.path.join(DATA, 'CURSEUR', 'or_curseur_dague.xbm')).encode('utf8'),
-            (os.path.join(DATA, 'CURSEUR', 'and_curseur_dague.xbm')).encode('utf8'))
+            (os.path.join(DATA, 'CURSEUR',
+                          'or_curseur_dague.xbm')).encode('utf8'),
+            (os.path.join(DATA, 'CURSEUR',
+                          'and_curseur_dague.xbm')).encode('utf8'))
 
         pygame.mouse.set_cursor(*cursor)
         pygame.mouse.set_visible(1)
@@ -497,24 +701,8 @@ class Interface:
                  ).encode('utf8').format(i+1)).convert_alpha())
 
         pygame.mixer_music.load(
-            os.path.join(DATA, 'MUSIQUE', 'Glaciaere-Hammock-02RelaxingInTheHammock.wav'))
-
-        self.creation_de_la_partie()
-        # Lignes a modifier
-
-    def creation_de_la_partie(self):
-        import _cache
-        pygame.display.set_caption(_cache.NOM_DU_LIVRE)
-        try:
-            cursor = pygame.cursors.load_xbm(
-                (os.path.join('_cache', 'DATA', 'CURSEUR', 'or_curseur_dague.xbm')).encode('utf8'),
-                (os.path.join('_cache', 'DATA', 'CURSEUR', 'and_curseur_dague.xbm')).encode('utf8'))
-        except:
-            cursor = pygame.cursors.load_xbm(
-                (os.path.join(DATA, 'CURSEUR', 'or_curseur_dague.xbm')).encode('utf8'),
-                (os.path.join(DATA, 'CURSEUR', 'and_curseur_dague.xbm')).encode('utf8'))
-        pygame.mouse.set_cursor(*cursor)
-        pygame.mouse.set_visible(1)
+            os.path.join(DATA, 'MUSIQUE',
+                         'Glaciaere-Hammock-02RelaxingInTheHammock.wav'))
 
     def Play_musique(self):
         pygame.mixer_music.play(-1)
@@ -781,6 +969,12 @@ class Interface:
         else:
             self.temps = False
 
+        self.cadre_tipeee.resize((taille_x-taille_x/6, taille_x/6),
+                                 (taille_x/6, taille_x/6),
+                                 taille_text)
+
+        font = pygame.font.SysFont(POLICE, size)
+
         # nb_image_fond = 0
         temps_timer = 0
         while 1:
@@ -817,6 +1011,7 @@ class Interface:
             # Affiche stats
             self.text_sprites.update()
             # Affiche Texte
+            self.cadre_tipeee_sprites.update()
             if self.text.fini:
                 self.bouton_sprites.update()
                 # Affiche boutons
@@ -831,6 +1026,13 @@ class Interface:
                 if self.horloge.end:
                     return (self.horloge.default_choice,
                             data['choix'][self.horloge.default_choice][1])
+
+            if DEBUG:
+                fps_text = font.render("FPS: " + str(FPSCLOCK.get_fps()),
+                                       1, (255, 255, 255))
+                fps_rect = fps_text.get_rect()
+                fps_rect.topleft = (taille_barre_stats, 0)
+                DISPLAYSURF.blit(fps_text, fps_rect)
 
             pygame.display.flip()
             # pygame.display.update()
@@ -861,6 +1063,7 @@ class Interface:
             DISPLAYSURF.fill(ORANGE)
 
             self.stats_sprites.update()
+            self.cadre_tipeee_sprites.update()
             self.text_sprites.update(False, alpha)
             self.horloge_sprites.update(False, alpha)
 
@@ -879,10 +1082,5 @@ class Interface:
             if alpha_diff >= 10:
                 return ('fin_anim',)
 
-
-"""
-I = Interface()
-for i in range(20):
-    I.page_livre(exemple)
-    time.sleep(1)
-"""
+    def ecran_accueille(self):
+        pass
