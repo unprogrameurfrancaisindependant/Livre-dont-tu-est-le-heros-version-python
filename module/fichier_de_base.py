@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 import random
 
-from creation_cache import create_cache, delete_cache, verify_cache
+from .creation_cache import create_cache, delete_cache, verify_cache
 
 # Ajouter extention twitch plus tard: twitchio
 
@@ -23,9 +23,9 @@ class Game_Master:
         # Ligne a modifier
 
     def creation_de_la_partie(self):
-        from classe_du_jeu import Jeu
+        from .classe_du_jeu import Jeu
         from _cache import Personnage
-        from Interface_graphique import Interface
+        from .Interface_graphique import Interface
 
         self.page_actuel = str(1)
         self.Personnage = Personnage()
@@ -42,9 +42,9 @@ class Game_Master:
 
         for I in range(phrase.count('{VAR}')):
             nb = phrase.find('{VAR}') + 5
-            nb_fin = min(map(t, [phrase.find('.', nb), phrase.find(',', nb),
+            nb_fin = min(list(map(t, [phrase.find('.', nb), phrase.find(',', nb),
                                  phrase.find(' ', nb),  phrase.find('!', nb),
-                                 phrase.find('?', nb)]))
+                                 phrase.find('?', nb)])))
 
             if hasattr(self.Jeu, phrase[nb:nb_fin].strip()):
                 phrase = phrase.replace(phrase[nb-5:nb_fin].strip(), str(
@@ -123,9 +123,8 @@ Actions:
 
         self.variables_histoire = self.histoire(self.page_actuel)
 
-        if 'actions' in self.variables_histoire.keys():
-            for Emplacement, quoi in (self.variables_histoire['actions']
-                                      .items()):
+        if 'actions' in list(self.variables_histoire.keys()):
+            for Emplacement, quoi in (list(self.variables_histoire['actions'].items())):
 
                 nom_variable = Emplacement.replace(' ', '_')
                 if not hasattr(self.Personnage, nom_variable):
@@ -247,16 +246,16 @@ creation_code = creation_code(code_bon_1, code_bon_2, code_faux)
             page_F = Option_Choix['parametres']['F']
             Choix = getattr(self.Jeu, Option_Choix['fonction'])
 
-            for key, attribut in Choix.items():
+            for key, attribut in list(Choix.items()):
                 Temporaire[key] = (
                     attribut['texte'],
                     page_V if attribut['reponse'] else page_F, True)
 
         elif 'bouton_1' in Option_Choix:
             Temporaire = dict()
-            for key, attribut in Option_Choix.items():
+            for key, attribut in list(Option_Choix.items()):
                 jouable = False
-                if 'condition' in attribut.keys():
+                if 'condition' in list(attribut.keys()):
                     if len(attribut['condition']) == 3:
                         nom_var, signe, valeur = attribut['condition']
                         if not hasattr(self.Personnage, nom_var):
@@ -377,7 +376,7 @@ Si on veut ajouter un temps sur une déccision:
     def creation_stats(self):
         stats = self.Personnage.stats
         T = dict()
-        for i, stat in stats.items():
+        for i, stat in list(stats.items()):
             if stat[2] == 'progressbar' or stat[2] == 'inv_progressbar':
                 T[i] = (stat[0], getattr(self.Personnage, stat[1]), stat[2],
                         getattr(self.Personnage, stat[3]), stat[4])
@@ -391,7 +390,7 @@ Si on veut ajouter un temps sur une déccision:
         stats = self.Personnage.stats
         liste_changements = list()
         for name in self.change_stats:
-            for number, stat in stats.items():
+            for number, stat in list(stats.items()):
                 if name == stat[1]:
                     liste_changements.append((stat[0],
                                               getattr(self.Personnage, name)))
@@ -406,7 +405,7 @@ Si on veut ajouter un temps sur une déccision:
 
     def random_temps(self, choix):
         liste = list()
-        for bouton, opt in choix.items():
+        for bouton, opt in list(choix.items()):
             if opt[2]:
                 liste.append(bouton)
         return random.choice(liste)

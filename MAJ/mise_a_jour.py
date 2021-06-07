@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 import os
 import shutil
 import tempfile
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
 import zipfile
 
-from mise_a_jour_paquets import paquets_mise_a_jour
+from .mise_a_jour_paquets import paquets_mise_a_jour
 from module import set_permissions
 
 Fichier_MAJ = 'MAJ/.information'
+
 
 
 def Tipeurs():
@@ -43,13 +42,12 @@ class MAJ:
         global Fichier_MAJ
 
         self.URL = '''https://raw.githubusercontent.com/
-unprogrameurfrancaisindependant/
-Livre-dont-tu-est-le-heros-version-python/
+thebosslol66/Livre-dont-tu-est-le-heros-version-python/
 game/MAJ/.information'''.replace('\n', '')
 
         self.fichier_MAJ = Fichier_MAJ
 
-        self.zip_URL = '''https://github.com/unprogrameurfrancaisindependant/
+        self.zip_URL = '''https://github.com/thebosslol66/
 Livre-dont-tu-est-le-heros-version-python/archive/game.zip'''.replace('\n', '')
 
     def createur_variables(self, expression, prefix=''):
@@ -58,13 +56,16 @@ Livre-dont-tu-est-le-heros-version-python/archive/game.zip'''.replace('\n', '')
                 variable_valeur[1].strip())
 
     def requete_maj(self):
-        req = urllib2.Request(self.URL)
+        req = urllib.request.Request(self.URL)
         try:
-            handle = urllib2.urlopen(req)
+            handle = urllib.request.urlopen(req)
         except Exception:
             return 'no connection'
+
         self.page_MAJ = handle.read()
 
+        self.page_MAJ = self.page_MAJ.decode('UTF-8')
+        
         liste = self.page_MAJ.replace('\n', '').split(';')
         for item in liste:
             self.createur_variables(item)
@@ -101,7 +102,7 @@ Livre-dont-tu-est-le-heros-version-python/archive/game.zip'''.replace('\n', '')
         Chemin_execution = os.getcwd()
         try:
             path_to_dir_temporaire = tempfile.mkdtemp(dir=Chemin_utilisateur)
-            urllib.urlretrieve(self.zip_URL,
+            urllib.request.urlretrieve(self.zip_URL,
                                os.path.join(
                                    path_to_dir_temporaire, 'file.zip'))
             with zipfile.ZipFile(os.path.join(
@@ -154,7 +155,11 @@ Livre-dont-tu-est-le-heros-version-python/archive/game.zip'''.replace('\n', '')
 jour, veuillez réessayer ulterieurement""".replace('\n', '')
 
         finally:
-            paquets_mise_a_jour()
+            if (paquets_mise_a_jour()):
+                self.mise_a_jour_du_jeu_complet()
+                print('''Un problème est survenue avec le fichier requirements.txt,
+une mise a jour a donc été effectué. Vous pouvez relancer le jeu''')
+                raise Exception()
             set_permissions('execute')
             try:
                 shutil.rmtree(path_to_dir_temporaire)

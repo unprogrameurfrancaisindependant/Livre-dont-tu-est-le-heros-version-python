@@ -29,7 +29,7 @@ Livre-dont-tu-est-le-heros-version-python'''.replace('\n', '')
                         pass
                     elif os.path.isfile(os.path.join(dossier, fichier)):
                         os.chmod(os.path.join(dossier, fichier), permission[2])
-                        print os.path.join(dossier, fichier)
+                        print((os.path.join(dossier, fichier)))
 
 
 def clear_files(here=True):

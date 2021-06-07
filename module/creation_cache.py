@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 import os
 import shutil
@@ -25,7 +25,7 @@ def create_cache(file_to_cache):
 
     import _cache
     os.mkdir(os.path.join(Chemin_execution, '_cache', 'PAGES'))
-    for index, story_page in _cache.fichier_histoire.histoire.items():
+    for index, story_page in list(_cache.fichier_histoire.histoire.items()):
         with open(os.path.join(Chemin_execution,
                                '_cache', 'PAGES',
                                '{}.txt').format(index), 'w') as f:

@@ -1,8 +1,7 @@
-﻿import os
+# -*- coding: utf-8 -*-
+import os
 import subprocess
 import sys
-
-from mise_a_jour import MAJ
 
 if os.name == 'nt':
     # sous windos
@@ -16,20 +15,18 @@ def paquets_mise_a_jour():
     global Os
 
     if Os == 'lin':
-        subprocess.call(['sudo', 'python2.7', '-m', 'pip', '--update', ])
+        subprocess.call(['sudo', 'python3', '-m', 'pip', '--update', ])
     elif Os == 'win':
-        subprocess.call([sys.executable, '-m', 'pip', '--update', ])
+        subprocess.call([sys.executable, '-m', 'pip3', '--update', ])
 
     Chemin_execution = os.getcwd()
     if 'requirements.txt' not in os.listdir(Chemin_execution):
-        MAJ().mise_a_jour_du_jeu_complet()
-        print '''Un problème est survenue avec le fichier requirements.txt,
-une mise a jour a donc été effectué. Vous pouvez relancer le jeu'''
-        raise Exception()
+        return 1
 
     if Os == 'lin':
-        subprocess.call(['sudo', 'python2.7', '-m', 'pip', 'install', '-r',
+        subprocess.call(['sudo', 'python', '-m', 'pip', 'install', '-r',
                          'requirements.txt'])
     elif Os == 'win':
         subprocess.call([sys.executable, '-m', 'pip', 'install', '-r',
                          'requirements.txt'])
+    return 0

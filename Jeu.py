@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3.9
 # -*- coding:Utf-8 -*-
 from MAJ import MAJ
 from module import Game_Master, clear_files, set_permissions
@@ -6,7 +6,7 @@ from module import Game_Master, clear_files, set_permissions
 DEBUG = True
 # Permet de debuguer le jeu lors de sa creation
 
-set_permissions('execute')
+set_permissions('free')
 
 MAJ().mise_a_jour_automatique()
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 import os
 
@@ -19,5 +19,5 @@ class Jeu:
                     str(page)), 'r') as f:
                 return eval(f.read())
         except:
-            print 'Page inexistante'
+            print('Page inexistante')
             raise Exception()

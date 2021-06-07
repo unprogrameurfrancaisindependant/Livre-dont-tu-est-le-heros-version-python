@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 import os
 import random
@@ -34,7 +34,7 @@ GREY = (191, 191, 191)
 IMG_bouton = list()
 IMG_horloge = list()
 
-DATA = 'DATA//'
+DATA = 'DATA/'
 
 DEBUG = False
 
@@ -132,7 +132,7 @@ class Bouton(pygame.sprite.Sprite):
 
         self.IMG_bouton = list()
         for Im in self.T:
-            self.IMG_bouton.append(pygame.transform.scale(Im, taille))
+            self.IMG_bouton.append(pygame.transform.scale(Im, (int(taille[0]), int(taille[1]))))
 
         self.image = self.IMG_bouton[0]
         self.rect = self.image.get_rect()
@@ -198,7 +198,7 @@ class Horloge(pygame.sprite.Sprite):
 
         self.IMG_horloge = list()
         for Im in IMG_horloge:
-            self.IMG_horloge.append(pygame.transform.scale(Im, taille))
+            self.IMG_horloge.append(pygame.transform.scale(Im, (int(taille[0]), int(taille[1]))))
 
         self.image = self.IMG_horloge[0]
         self.rect = self.image.get_rect()
@@ -511,7 +511,7 @@ class cadre_tipeee(pygame.sprite.Sprite):
             self.rapport = 1
 
         self.taille = taille
-        self.image = pygame.transform.scale(self.image, taille)
+        self.image = pygame.transform.scale(self.image, (int(taille[0]), int(taille[1])))
         self.rect = self.image.get_rect()
         self.rect = self.rect.move(pos)
         self.font = pygame.font.SysFont(POLICE, taille_texte)
@@ -653,15 +653,15 @@ class Interface:
         try:
             cursor = pygame.cursors.load_xbm(
                 (os.path.join('_cache', 'DATA', 'CURSEUR',
-                              'or_curseur_dague.xbm')).encode('utf8'),
+                              'or_curseur_dague.xbm')),
                 (os.path.join('_cache', 'DATA', 'CURSEUR',
-                              'and_curseur_dague.xbm')).encode('utf8'))
+                              'and_curseur_dague.xbm')))
         except:
             cursor = pygame.cursors.load_xbm(
                 (os.path.join(DATA, 'CURSEUR',
-                              'or_curseur_dague.xbm')).encode('utf8'),
+                              'or_curseur_dague.xbm')),
                 (os.path.join(DATA, 'CURSEUR',
-                              'and_curseur_dague.xbm')).encode('utf8'))
+                              'and_curseur_dague.xbm')))
         pygame.mouse.set_cursor(*cursor)
         pygame.mouse.set_visible(1)
 
@@ -681,24 +681,24 @@ class Interface:
 
         cursor = pygame.cursors.load_xbm(
             (os.path.join(DATA, 'CURSEUR',
-                          'or_curseur_dague.xbm')).encode('utf8'),
+                          'or_curseur_dague.xbm')),
             (os.path.join(DATA, 'CURSEUR',
-                          'and_curseur_dague.xbm')).encode('utf8'))
+                          'and_curseur_dague.xbm')))
 
         pygame.mouse.set_cursor(*cursor)
         pygame.mouse.set_visible(1)
-
+        
         IMG_bouton = list()
         for i in range(105):
             IMG_bouton.append(pygame.image.load(
                 (os.path.join(DATA, 'BOUTON', 'IMG_bouton_{}')
-                 ).encode('utf8').format(i+1)).convert_alpha())
+                 ).format(i+1)).convert_alpha())
 
         IMG_horloge = list()
         for i in range(48):
             IMG_horloge.append(pygame.image.load(
                 (os.path.join(DATA, 'HORLOGE', 'IMG_horloge_{}')
-                 ).encode('utf8').format(i+1)).convert_alpha())
+                 ).format(i+1)).convert_alpha())
 
         pygame.mixer_music.load(
             os.path.join(DATA, 'MUSIQUE',
